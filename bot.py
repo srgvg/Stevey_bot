@@ -1,6 +1,7 @@
 from discord.ext import commands
 from os import getenv
 from dotenv import load_dotenv
+from cogs import minecraft
 
 
 class Stevey:
@@ -8,9 +9,20 @@ class Stevey:
         """ Get bot token and set the command prefix to use the bot in Discord. """
         self.token = getenv('DISCORD_BOT_TOKEN')
 
+        # Add cogs to our bot:
+        self.cogs = [
+            {'name': 'Minecraft', 'obj': minecraft.Minecraft, 'active': True},
+        ]
+
         # Here we chose 's:' to call our bot in Discord. Feel free to change this to your liking.
         self.bot = commands.Bot(command_prefix='s:', case_insensitive=True)
         self.add_events()
+        self.init_cogs()
+
+    def init_cogs(self):
+        """ Loop through all cogs in our list and add them to our Bot """
+        for cog in self.cogs:
+            self.bot.add_cog(cog['obj'](self.bot))
 
     def add_events(self):
         """ Add on_ready() event to bot. We can add more events here in future if required. """
@@ -33,4 +45,5 @@ if __name__ == '__main__':
     s = Stevey()
 
     # Start our bot
+    print("Starting bot(Stevey)")
     s.start_bot()
